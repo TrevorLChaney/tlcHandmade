@@ -1,0 +1,16 @@
+#include <iostream>
+#include <cctype>
+
+int main(int argc, const char **argv, const char **env) {
+	char x = 0;
+	try {
+		std::cout << "x = ";
+		std::cin >> x;
+		if(!isdigit(x)) {
+			throw "\nx is not a number";
+		}
+		std::cout << "\nx is " << x << std::endl;
+	} catch(const char *errorMessage) {
+		std::cerr << errorMessage << std::endl;
+	}
+}

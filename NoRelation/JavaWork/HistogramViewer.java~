@@ -1,0 +1,5 @@
+import javax.swing.JFrame;
+
+public class HistogramViewer {
+	public static void main(String[] args) {
+		HistogramComponent histogramComponent = new Histor
