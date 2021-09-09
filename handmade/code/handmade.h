@@ -1,6 +1,13 @@
 #ifndef HANDHADE_H
 #define HANDMADE_H
 
+#include "handmade_platform.h"
+
+#define internal static
+#define local_persist static
+#define global_variable static
+
+#define Pi32 3.14159265359f
 
 #if HANDMADE_SLOW
 #define Assert(Expression) if(!(Expression)) { *(int *)0 = 0; }
@@ -22,87 +29,58 @@ SafeTruncateUInt64(uint64_t Value) {
     return(Result);
 }
 
-#if HANDMADE_INTERNAL
-struct debug_read_file_result {
-    uint32_t ContentsSize;
-    void *Contents;
+inline game_controller_input *GetController(game_input *Input, unsigned int ControllerIndex) {
+    Assert(ControllerIndex < ArrayCount(Input->Controllers));
+
+    game_controller_input *Result = &Input->Controllers[ControllerIndex];
+    return Result;
+}
+
+struct canonical_position {
+  int32_t TileMapX;
+  int32_t TileMapY;
+
+  int32_t TileX;
+  int32_t TileY;
+
+  float TileRelX;
+  float TileRelY;
 };
 
-internal debug_read_file_result DEBUGPlatformReadEntireFile(char *Filename);
-internal void DEBUGPlatformFreeFileMemory(void *Memory);
-internal bool32 DEBUGPlatformWriteEntireFile(char *Filename, uint32_t MemorySize, void *Memory);
-#endif
+struct raw_position {
+  int32_t TileMapX;
+  int32_t TileMapY;
 
-struct game_offscreen_buffer {
-    void *Memory;
-    int Width;
-    int Height;
-    int Pitch;
+  float X;
+  float Y;
 };
 
-struct game_sound_output_buffer {
-    int SamplesPerSecond;
-    int SampleCount;
-    int16_t *Samples;
+struct tile_map {
+    uint32_t *Tiles;
 };
 
-struct game_button_state {
-    int HalfTransitionCount;
-    bool32 EndedDown;
+struct world {
+    float TileSideInMeters;
+    int32_t TileSideInPixels;
+
+    int32_t CountX;
+    int32_t CountY;
+
+    float UpperLeftX;
+    float UpperLeftY;
+
+    int32_t TileMapCountX;
+    int32_t TileMapCountY;
+
+    tile_map *TileMaps;
 };
 
-struct game_controller_input {
-    bool32 IsAnalog;
-
-    float StartX;
-    float StartY;
-
-    float MinX;
-    float MinY;
-
-    float MaxX;
-    float MaxY;
-
-    float EndX;
-    float EndY;
-
-    union {
-        game_button_state Buttons[6];
-        struct {
-            game_button_state Up;
-            game_button_state Down;
-            game_button_state Left;
-            game_button_state Right;
-            game_button_state LeftShoulder;
-            game_button_state RightShoulder;
-        };
-    };
-};
-
-struct game_input {
-    game_controller_input Controllers[4];
-};
-
-struct game_memory {
-    bool32 IsInitialized;
-
-    uint64_t PermanentStorageSize;
-    void *PermanentStorage;
-
-    uint64_t TransientStorageSize;
-    void *TransientStorage;
-};
-
-
-internal void
-GameUpdateAndRender(game_memory *Memory, game_input *Input, game_offscreen_buffer *Buffer,
-        game_sound_output_buffer *SoundBuffer);
-
-//Find somewhere to live.
 struct game_state {
-    int ToneHz;
-    int GreenOffset;
-    int BlueOffset;
+    int32_t PlayerTileMapX;
+    int32_t PlayerTileMapY;
+
+    float PlayerX;
+    float PlayerY;
 };
 
 #endif
